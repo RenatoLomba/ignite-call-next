@@ -1,5 +1,11 @@
+import { Heading, Text } from "@ignite-ui/react";
+
 export default function Home() {
   return (
-    <div>Hello world</div>
+    <div>
+      <Heading>Hello world</Heading>
+      <Text>Ignite UI</Text>
+      <span>teste</span>
+    </div>
   )
 }
