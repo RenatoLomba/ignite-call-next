@@ -17,18 +17,23 @@ const FormContainer = styled(Box, {
   },
 })
 
-const ErrorText = styled(Text, {
+const FormAnnotation = styled('div', {
   display: 'block',
-  color: '#e53e3e',
-  marginTop: '$1',
+  marginTop: '$2',
+
+  [`> ${Text}`]: {
+    color: '$gray400',
+  },
 })
 
 const formSchema = z.object({
   username: z
-    .string({
-      required_error: 'Campo obrigatório',
+    .string()
+    .min(3, { message: 'Mínimo de 3 caracteres' })
+    .regex(/^([a-z\\-]+)$/i, {
+      message: 'Permitido apenas letras e hífen(-)',
     })
-    .min(1, { message: 'Mínimo de 1 caractere' }),
+    .transform((val) => val.toLowerCase()),
 })
 
 type FormFields = z.infer<typeof formSchema>
@@ -47,8 +52,8 @@ export function ClaimUsernameForm() {
   }
 
   return (
-    <FormContainer as="form" onSubmit={handleSubmit(onFormSubmit)}>
-      <div>
+    <>
+      <FormContainer as="form" onSubmit={handleSubmit(onFormSubmit)}>
         <TextInput
           {...register('username')}
           size="sm"
@@ -56,17 +61,19 @@ export function ClaimUsernameForm() {
           placeholder="Seu usuário"
         />
 
-        {errors.username ? (
-          <ErrorText as="small" size="sm">
-            {errors.username.message}
-          </ErrorText>
-        ) : null}
-      </div>
+        <Button size="sm" type="submit">
+          Reservar
+          <ArrowRight size={20} />
+        </Button>
+      </FormContainer>
 
-      <Button size="sm" type="submit">
-        Reservar
-        <ArrowRight size={20} />
-      </Button>
-    </FormContainer>
+      <FormAnnotation>
+        <Text as="small" size="sm">
+          {errors.username
+            ? errors.username.message
+            : 'Digite o nome do usuário'}
+        </Text>
+      </FormAnnotation>
+    </>
   )
 }
