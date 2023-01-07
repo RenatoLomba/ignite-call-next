@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -39,21 +40,25 @@ const formSchema = z.object({
 type FormFields = z.infer<typeof formSchema>
 
 export function ClaimUsernameForm() {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormFields>({
     resolver: zodResolver(formSchema),
   })
 
-  const onFormSubmit = async (data: FormFields) => {
-    console.log({ data })
-  }
+  const onFormSubmit = handleSubmit(async ({ username }) => {
+    await router.push({
+      pathname: '/register',
+      query: { username },
+    })
+  })
 
   return (
     <>
-      <FormContainer as="form" onSubmit={handleSubmit(onFormSubmit)}>
+      <FormContainer as="form" onSubmit={onFormSubmit}>
         <TextInput
           {...register('username')}
           size="sm"
@@ -61,7 +66,7 @@ export function ClaimUsernameForm() {
           placeholder="seu-usuario"
         />
 
-        <Button size="sm" type="submit">
+        <Button disabled={isSubmitting} size="sm" type="submit">
           Reservar
           <ArrowRight size={20} />
         </Button>
