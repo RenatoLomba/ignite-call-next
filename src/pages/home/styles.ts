@@ -18,7 +18,7 @@ export const HeroWrapper = styled('div', {
   maxWidth: 480,
   padding: '0 $10',
 
-  [`${Text}`]: {
+  [`> ${Text}`]: {
     marginTop: '$2',
     color: '$gray200',
   },
@@ -26,11 +26,11 @@ export const HeroWrapper = styled('div', {
   '@media(max-width: 600px)': {
     padding: '0 $5',
 
-    [`${Heading}`]: {
+    [`> ${Heading}`]: {
       fontSize: '$6xl',
     },
 
-    [`${Text}`]: {
+    [`> ${Text}`]: {
       fontSize: '$lg',
     },
   },
