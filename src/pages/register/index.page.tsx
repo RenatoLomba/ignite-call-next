@@ -6,7 +6,9 @@ import { z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Heading, MultiStep, Text, TextInput } from '@ignite-ui/react'
+import { useMutation } from '@tanstack/react-query'
 
+import { api } from '../../lib/axios'
 import { Container, Form, FormErrorText, Header } from './styles'
 
 const formSchema = z.object({
@@ -30,7 +32,7 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(formSchema),
   })
@@ -39,8 +41,18 @@ export default function RegisterPage() {
     if (username && typeof username === 'string') setValue('username', username)
   }, [username, setValue])
 
+  const { mutateAsync: createUser, isLoading } = useMutation(
+    async (data: FormFields) => {
+      const response = await api.post('/users', data)
+
+      console.log({ data: response.data })
+
+      return response.data
+    },
+  )
+
   const onFormSubmit = handleSubmit(async (data) => {
-    console.log({ data })
+    await createUser(data)
   })
 
   return (
@@ -82,7 +94,7 @@ export default function RegisterPage() {
           ) : null}
         </label>
 
-        <Button disabled={isSubmitting} type="submit">
+        <Button disabled={isLoading} type="submit">
           Próximo passo <ArrowRight size={20} />
         </Button>
       </Form>
