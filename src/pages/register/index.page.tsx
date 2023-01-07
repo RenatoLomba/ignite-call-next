@@ -42,13 +42,7 @@ export default function RegisterPage() {
   }, [username, setValue])
 
   const { mutateAsync: createUser, isLoading } = useMutation(
-    async (data: FormFields) => {
-      const response = await api.post('/users', data)
-
-      console.log({ data: response.data })
-
-      return response.data
-    },
+    async (data: FormFields) => (await api.post('/users', data)).data,
   )
 
   const onFormSubmit = handleSubmit(async (data) => {
