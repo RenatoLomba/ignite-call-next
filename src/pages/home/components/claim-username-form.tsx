@@ -58,7 +58,7 @@ export function ClaimUsernameForm() {
           {...register('username')}
           size="sm"
           prefix="ignite.com/"
-          placeholder="Seu usuário"
+          placeholder="seu-usuario"
         />
 
         <Button size="sm" type="submit">
