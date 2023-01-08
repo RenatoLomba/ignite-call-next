@@ -1,4 +1,5 @@
-import { signIn, useSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 
 import { Button, Heading, MultiStep, Text } from '@ignite-ui/react'
@@ -6,9 +7,10 @@ import { Button, Heading, MultiStep, Text } from '@ignite-ui/react'
 import { ConnectBox, ConnectItem, Container, Header } from './styles'
 
 export default function CalendarConnectionPage() {
-  const { data: session } = useSession()
+  const router = useRouter()
+  const { permissions_error: permissionsError } = router.query
 
-  console.log({ session })
+  console.log({ permissionsError })
 
   return (
     <Container>
