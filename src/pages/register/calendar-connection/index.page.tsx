@@ -1,4 +1,5 @@
-import { signIn, useSession } from 'next-auth/react'
+import type { GetServerSideProps } from 'next'
+import { getSession, signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { ArrowRight, Check } from 'phosphor-react'
 
@@ -11,6 +12,14 @@ import {
   Container,
   Header,
 } from './styles'
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getSession({ ctx })
+
+  return {
+    props: { session },
+  }
+}
 
 export default function CalendarConnectionPage() {
   const router = useRouter()
