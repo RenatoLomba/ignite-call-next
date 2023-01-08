@@ -1,3 +1,4 @@
+import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import { Toaster } from 'react-hot-toast'
 
@@ -9,11 +10,16 @@ import { globalStyles } from '../styles/global'
 
 globalStyles()
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
-      <Toaster toastOptions={toastOptions} />
-    </QueryClientProvider>
+    <SessionProvider session={session}>
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+        <Toaster toastOptions={toastOptions} />
+      </QueryClientProvider>
+    </SessionProvider>
   )
 }
