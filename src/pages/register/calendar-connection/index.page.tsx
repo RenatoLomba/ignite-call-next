@@ -1,16 +1,28 @@
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { ArrowRight } from 'phosphor-react'
+import { ArrowRight, Check } from 'phosphor-react'
 
 import { Button, Heading, MultiStep, Text } from '@ignite-ui/react'
 
-import { ConnectBox, ConnectItem, Container, Header } from './styles'
+import {
+  AuthErrorText,
+  ConnectBox,
+  ConnectItem,
+  Container,
+  Header,
+} from './styles'
 
 export default function CalendarConnectionPage() {
   const router = useRouter()
+  const { status } = useSession()
   const { permissions_error: permissionsError } = router.query
 
-  console.log({ permissionsError })
+  const isAuthenticated = status === 'authenticated'
+
+  const hasAuthCalendarError =
+    !isAuthenticated && !!permissionsError && permissionsError === 'calendar'
+
+  const handleCalendarConnection = () => signIn('google')
 
   return (
     <Container>
@@ -28,17 +40,31 @@ export default function CalendarConnectionPage() {
         <ConnectItem>
           <Text>Google Calendar</Text>
 
-          <Button
-            onClick={() => signIn('google')}
-            size="sm"
-            variant="secondary"
-          >
-            Conectar
-            <ArrowRight />
-          </Button>
+          {isAuthenticated ? (
+            <Button size="sm" disabled>
+              Conectado
+              <Check />
+            </Button>
+          ) : (
+            <Button
+              onClick={handleCalendarConnection}
+              size="sm"
+              variant="secondary"
+            >
+              Conectar
+              <ArrowRight />
+            </Button>
+          )}
         </ConnectItem>
 
-        <Button>
+        {hasAuthCalendarError ? (
+          <AuthErrorText size="sm">
+            Falha ao se conectar ao Google, verifique se você habilitou as
+            permissões de acesso ao Google Calendar.
+          </AuthErrorText>
+        ) : null}
+
+        <Button disabled={!isAuthenticated}>
           Próximo passo <ArrowRight />
         </Button>
       </ConnectBox>
