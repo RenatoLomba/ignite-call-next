@@ -1,6 +1,9 @@
 import NextAuth, { type NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
+import { PrismaAdapter } from '../../../lib/next-auth/prisma-adapter'
+import { prisma } from '../../../lib/prisma'
+
 const googleApisUrl = 'https://www.googleapis.com'
 
 const getGoogleApiUrlScope = (scopes: string[]) => {
@@ -8,6 +11,7 @@ const getGoogleApiUrlScope = (scopes: string[]) => {
 }
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -23,7 +27,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-
   callbacks: {
     async signIn({ account }) {
       if (!account?.scope?.includes(getGoogleApiUrlScope(['calendar']))) {
