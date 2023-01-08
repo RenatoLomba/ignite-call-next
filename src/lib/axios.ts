@@ -7,8 +7,9 @@ export const api = axios.create({
 
 api.interceptors.response.use(
   (res) => res,
-  (err: AxiosError<{ success?: boolean; message?: string }>) => {
-    toast.error(err.response?.data?.message ?? 'Erro Interno')
+  (err: AxiosError<{ message?: string } | null>) => {
+    toast.error(err.response!.data?.message ?? 'Erro Interno')
+    err.response!.data = null
     return err.response
   },
 )

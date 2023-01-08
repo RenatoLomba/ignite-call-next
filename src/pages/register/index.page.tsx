@@ -24,6 +24,10 @@ const formSchema = z.object({
 
 type FormFields = z.infer<typeof formSchema>
 
+type CreateUserResponseData = {
+  id: string
+}
+
 export default function RegisterPage() {
   const router = useRouter()
   const { username } = router.query
@@ -42,7 +46,15 @@ export default function RegisterPage() {
   }, [username, setValue])
 
   const { mutateAsync: createUser, isLoading } = useMutation(
-    async (data: FormFields) => (await api.post('/users', data)).data,
+    async (data: FormFields) =>
+      (await api.post<CreateUserResponseData>('/users', data)).data,
+    {
+      onSettled: async (data) => {
+        if (!data) return
+
+        await router.push('/register/calendar-connection')
+      },
+    },
   )
 
   const onFormSubmit = handleSubmit(async (data) => {
