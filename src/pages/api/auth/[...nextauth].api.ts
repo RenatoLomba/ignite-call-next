@@ -46,6 +46,12 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
         return true
       },
+      async session({ session, user }) {
+        return {
+          ...session,
+          user,
+        }
+      },
     },
   })
 }
