@@ -1,4 +1,6 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Adapter, AdapterSession, AdapterUser } from 'next-auth/adapters'
+import { parseCookies, destroyCookie } from 'nookies'
 
 import type { PrismaClient, Session, User } from '@prisma/client'
 
@@ -21,22 +23,47 @@ const sessionMap = (session: Session): AdapterSession => {
   }
 }
 
-export function PrismaAdapter(client: PrismaClient): Adapter {
+type PrismaAdapterOptions = {
+  req: NextApiRequest
+  res: NextApiResponse
+}
+
+export function PrismaAdapter(
+  client: PrismaClient,
+  { req, res }: PrismaAdapterOptions,
+): Adapter {
   return {
-    async createUser(user) {},
+    async createUser({ email, avatar_url: avatarUrl }) {
+      const { '@ignite-call:userId': userId } = parseCookies({ req })
+
+      if (!userId) {
+        throw new Error('ID do usuário não foi encontrado nos cookies.')
+      }
+
+      const user = await client.user.update({
+        where: { id: userId },
+        data: { email, avatar_url: avatarUrl },
+      })
+
+      destroyCookie({ res }, '@ignite-call:userId', { path: '/' })
+
+      return userMap(user)
+    },
 
     async getUser(id) {
-      const user = await client.user.findUniqueOrThrow({ where: { id } })
+      const user = await client.user.findUnique({ where: { id } })
+      if (!user) return null
       return userMap(user)
     },
 
     async getUserByEmail(email) {
-      const user = await client.user.findUniqueOrThrow({ where: { email } })
+      const user = await client.user.findUnique({ where: { email } })
+      if (!user) return null
       return userMap(user)
     },
 
     async getUserByAccount({ providerAccountId, provider }) {
-      const { user } = await client.account.findUniqueOrThrow({
+      const account = await client.account.findUnique({
         where: {
           provider_provider_account_id: {
             provider,
@@ -47,7 +74,9 @@ export function PrismaAdapter(client: PrismaClient): Adapter {
           user: true,
         },
       })
-      return userMap(user)
+
+      if (!account) return null
+      return userMap(account.user)
     },
 
     async updateUser({ id, name, email, avatar_url: avatarUrl }) {
@@ -90,13 +119,14 @@ export function PrismaAdapter(client: PrismaClient): Adapter {
     },
 
     async getSessionAndUser(sessionToken) {
-      const session = await client.session.findUniqueOrThrow({
+      const session = await client.session.findUnique({
         where: { session_token: sessionToken },
         include: {
           user: true,
         },
       })
 
+      if (!session) return null
       return {
         session: sessionMap(session),
         user: userMap(session.user),
@@ -112,25 +142,8 @@ export function PrismaAdapter(client: PrismaClient): Adapter {
       return sessionMap(session)
     },
 
-    async createVerificationToken({ identifier, expires, token }) {
-      const verToken = await client.verificationToken.create({
-        data: { expires, identifier, token },
-      })
-
-      return verToken
-    },
-
-    async useVerificationToken({ identifier, token }) {
-      const verToken = await client.verificationToken.findUniqueOrThrow({
-        where: {
-          identifier_token: {
-            identifier,
-            token,
-          },
-        },
-      })
-
-      return verToken
+    async deleteSession(sessionToken) {
+      await client.session.delete({ where: { session_token: sessionToken } })
     },
   }
 }
