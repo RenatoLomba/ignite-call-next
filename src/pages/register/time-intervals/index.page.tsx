@@ -1,5 +1,5 @@
 import { ArrowRight } from 'phosphor-react'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -44,6 +44,7 @@ export default function TimeIntervalsPage() {
     register,
     handleSubmit,
     formState: { isSubmitting },
+    watch,
   } = useForm<FormFields>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,6 +69,8 @@ export default function TimeIntervalsPage() {
     console.log({ data })
   })
 
+  const intervals = watch('intervals')
+
   return (
     <Container>
       <Header>
@@ -85,7 +88,18 @@ export default function TimeIntervalsPage() {
           {fields.map((field, index) => (
             <IntervalItem key={field.id}>
               <IntervalDate>
-                <Checkbox checked={field.enabled} />
+                <Controller
+                  name={`intervals.${index}.enabled`}
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      onCheckedChange={(checked) =>
+                        field.onChange(checked === true)
+                      }
+                      checked={field.value}
+                    />
+                  )}
+                />
                 <Text>{weekDays[field.weekDay]}</Text>
               </IntervalDate>
               <IntervalInputs>
@@ -94,12 +108,14 @@ export default function TimeIntervalsPage() {
                   size="sm"
                   type="time"
                   step={60}
+                  disabled={!intervals[index].enabled}
                 />
                 <TextInput
                   {...register(`intervals.${index}.endTime`)}
                   size="sm"
                   type="time"
                   step={60}
+                  disabled={!intervals[index].enabled}
                 />
               </IntervalInputs>
             </IntervalItem>
