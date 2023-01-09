@@ -12,7 +12,7 @@ import {
   TextInput,
 } from '@ignite-ui/react'
 
-import { getWeekDays } from '../../../utils/get-week-days'
+import { convertTimeStringToMinutes, getWeekDays } from '../../../utils'
 import {
   Container,
   FormErrorText,
@@ -30,18 +30,30 @@ const formSchema = z.object({
       z.object({
         weekDay: z.number().min(0).max(6),
         enabled: z.boolean(),
-        startTime: z.string(),
-        endTime: z.string(),
+        startTime: z.string().transform(convertTimeStringToMinutes),
+        endTime: z.string().transform(convertTimeStringToMinutes),
       }),
     )
     .length(7)
     .transform((intervals) => intervals.filter((interval) => interval.enabled))
     .refine((intervals) => intervals.length > 0, {
       message: 'Inclua pelo menos 1 dia da semana.',
-    }),
+    })
+    .refine(
+      (intervals) => {
+        return intervals.every(
+          (interval) => interval.endTime - 60 >= interval.startTime,
+        )
+      },
+      {
+        message:
+          'O horário de término deve ser pelo menos 1 hora depois do horário de inicio.',
+      },
+    ),
 })
 
-type FormFields = z.infer<typeof formSchema>
+type FormFieldsInput = z.input<typeof formSchema>
+type FormFieldsOutput = z.output<typeof formSchema>
 
 const weekDays = getWeekDays()
 
@@ -52,7 +64,7 @@ export default function TimeIntervalsPage() {
     handleSubmit,
     formState: { isSubmitting, errors },
     watch,
-  } = useForm<FormFields>({
+  } = useForm<FormFieldsInput>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       intervals: [
@@ -73,7 +85,9 @@ export default function TimeIntervalsPage() {
   })
 
   const onFormSubmit = handleSubmit(async (data) => {
-    console.log({ data })
+    const { intervals } = data as unknown as FormFieldsOutput
+
+    console.log({ intervals })
   })
 
   const intervals = watch('intervals')
