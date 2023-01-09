@@ -1,3 +1,4 @@
+// #region IMPORTS
 import { ArrowRight } from 'phosphor-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -23,6 +24,7 @@ import {
   IntervalItem,
   IntervalsContainer,
 } from './styles'
+// #endregion
 
 const formSchema = z.object({
   intervals: z
