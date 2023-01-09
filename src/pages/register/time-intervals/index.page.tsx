@@ -12,7 +12,9 @@ import {
   Checkbox,
   TextInput,
 } from '@ignite-ui/react'
+import { useMutation } from '@tanstack/react-query'
 
+import { api } from '../../../lib/axios'
 import { convertTimeStringToMinutes, getWeekDays } from '../../../utils'
 import {
   Container,
@@ -86,13 +88,26 @@ export default function TimeIntervalsPage() {
     control,
   })
 
+  const { mutateAsync: createTimeIntervals, isLoading: isCreating } =
+    useMutation(
+      async (intervals: FormFieldsOutput['intervals']) =>
+        (await api.post('/users/time-intervals', intervals)).data,
+      {
+        onSettled(data) {
+          if (!data) return
+          console.log(data)
+        },
+      },
+    )
+
   const onFormSubmit = handleSubmit(async (data) => {
     const { intervals } = data as unknown as FormFieldsOutput
-
-    console.log({ intervals })
+    await createTimeIntervals(intervals)
   })
 
   const intervals = watch('intervals')
+
+  const isLoading = isSubmitting || isCreating
 
   return (
     <Container>
@@ -149,7 +164,7 @@ export default function TimeIntervalsPage() {
           <FormErrorText size="sm">{errors.intervals.message}</FormErrorText>
         ) : null}
 
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isLoading}>
           Próximo passo
           <ArrowRight />
         </Button>

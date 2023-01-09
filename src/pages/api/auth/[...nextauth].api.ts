@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import NextAuth from 'next-auth'
+import NextAuth, { type NextAuthOptions } from 'next-auth'
 import GoogleProvider, { type GoogleProfile } from 'next-auth/providers/google'
 
 import { PrismaAdapter } from '../../../lib/next-auth/prisma-adapter'
@@ -11,8 +11,11 @@ const getGoogleApiUrlScope = (scopes: string[]) => {
   return scopes.map((scope) => `${googleApisUrl}/auth/${scope}`).join(' ')
 }
 
-export default async function auth(req: NextApiRequest, res: NextApiResponse) {
-  return await NextAuth(req, res, {
+export function buildNextAuthOptions(
+  req: NextApiRequest,
+  res: NextApiResponse,
+): NextAuthOptions {
+  return {
     adapter: PrismaAdapter(prisma, { req, res }),
     providers: [
       GoogleProvider({
@@ -53,5 +56,9 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
         }
       },
     },
-  })
+  }
+}
+
+export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+  return await NextAuth(req, res, buildNextAuthOptions(req, res))
 }
