@@ -1,23 +1,13 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { unstable_getServerSession as getServerSession } from 'next-auth'
+import { withAuthSession } from '../utils/with-auth-session'
 
-import { buildNextAuthOptions } from '../auth/[...nextauth].api'
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+const handler = withAuthSession((req, res, session) => {
   if (req.method !== 'POST') {
     return res.status(405).end()
   }
 
-  const session = await getServerSession(
-    req,
-    res,
-    buildNextAuthOptions(req, res),
-  )
-
   return res.status(201).json({
     session,
   })
-}
+})
+
+export default handler

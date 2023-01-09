@@ -1,6 +1,7 @@
 import type { GetServerSideProps } from 'next'
 import { getSession, signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { parseCookies } from 'nookies'
 import { ArrowRight, Check } from 'phosphor-react'
 
 import { Button, Heading, MultiStep, Text } from '@ignite-ui/react'
@@ -15,6 +16,19 @@ import {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getSession({ ctx })
+
+  if (!session) {
+    const { '@ignite-call:userId': userId } = parseCookies(ctx)
+
+    if (!userId) {
+      return {
+        redirect: {
+          destination: '/register',
+          permanent: false,
+        },
+      }
+    }
+  }
 
   return {
     props: { session },
