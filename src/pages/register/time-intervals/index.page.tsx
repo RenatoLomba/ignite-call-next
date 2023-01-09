@@ -15,6 +15,7 @@ import {
 import { getWeekDays } from '../../../utils/get-week-days'
 import {
   Container,
+  FormErrorText,
   Header,
   IntervalBox,
   IntervalDate,
@@ -24,14 +25,20 @@ import {
 } from './styles'
 
 const formSchema = z.object({
-  intervals: z.array(
-    z.object({
-      weekDay: z.number(),
-      enabled: z.boolean(),
-      startTime: z.string(),
-      endTime: z.string(),
+  intervals: z
+    .array(
+      z.object({
+        weekDay: z.number().min(0).max(6),
+        enabled: z.boolean(),
+        startTime: z.string(),
+        endTime: z.string(),
+      }),
+    )
+    .length(7)
+    .transform((intervals) => intervals.filter((interval) => interval.enabled))
+    .refine((intervals) => intervals.length > 0, {
+      message: 'Inclua pelo menos 1 dia da semana.',
     }),
-  ),
 })
 
 type FormFields = z.infer<typeof formSchema>
@@ -43,7 +50,7 @@ export default function TimeIntervalsPage() {
     control,
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
     watch,
   } = useForm<FormFields>({
     resolver: zodResolver(formSchema),
@@ -121,6 +128,10 @@ export default function TimeIntervalsPage() {
             </IntervalItem>
           ))}
         </IntervalsContainer>
+
+        {errors?.intervals ? (
+          <FormErrorText size="sm">{errors.intervals.message}</FormErrorText>
+        ) : null}
 
         <Button type="submit" disabled={isSubmitting}>
           Próximo passo

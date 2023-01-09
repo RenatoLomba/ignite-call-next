@@ -1,5 +1,6 @@
 import { Box, styled } from '@ignite-ui/react'
 
+import { FormErrorText as ImportedFormErrorText } from '../styles'
 export { Container, Header } from '../styles'
 
 export const IntervalBox = styled(Box, {
@@ -39,4 +40,8 @@ export const IntervalInputs = styled('div', {
   'input::-webkit-calendar-picker-indicator': {
     filter: 'invert(100%) brightness(40%) saturate(0%)',
   },
+})
+
+export const FormErrorText = styled(ImportedFormErrorText, {
+  marginBottom: '$2',
 })
