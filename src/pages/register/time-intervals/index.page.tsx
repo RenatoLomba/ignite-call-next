@@ -1,4 +1,5 @@
 // #region IMPORTS
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -69,6 +70,7 @@ type FormFieldsOutput = z.output<typeof formSchema>
 const weekDays = getWeekDays()
 
 export default function TimeIntervalsPage() {
+  const router = useRouter()
   const {
     control,
     register,
@@ -100,9 +102,9 @@ export default function TimeIntervalsPage() {
       async (data: FormFieldsOutput) =>
         (await api.post('/users/time-intervals', data)).data,
       {
-        onSettled(data) {
+        async onSettled(data) {
           if (!data) return
-          console.log(data)
+          await router.push('/register/update-profile')
         },
       },
     )

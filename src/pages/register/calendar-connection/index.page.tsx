@@ -87,7 +87,10 @@ export default function CalendarConnectionPage() {
           </AuthErrorText>
         ) : null}
 
-        <Button disabled={!isAuthenticated}>
+        <Button
+          onClick={async () => await router.push('/register/time-intervals')}
+          disabled={!isAuthenticated}
+        >
           Próximo passo <ArrowRight />
         </Button>
       </ConnectBox>

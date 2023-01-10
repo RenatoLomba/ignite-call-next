@@ -1,4 +1,5 @@
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -12,7 +13,9 @@ import {
   Text,
   TextArea,
 } from '@ignite-ui/react'
+import { useMutation } from '@tanstack/react-query'
 
+import { api } from '../../../lib/axios'
 import { withSSRAuthSession } from '../../../utils/with-ssr-auth-session'
 import { Container, FormAnnotation, Header, ProfileBox } from './styles'
 
@@ -23,6 +26,7 @@ const formSchema = z.object({
 type FormFields = z.infer<typeof formSchema>
 
 export default function UpdateProfilePage() {
+  const router = useRouter()
   const { data: session } = useSession()
   const {
     register,
@@ -32,13 +36,21 @@ export default function UpdateProfilePage() {
     resolver: zodResolver(formSchema),
   })
 
-  console.log({ session })
+  const { mutateAsync: updateUserProfile, isLoading: isUpdating } = useMutation(
+    async (data: FormFields) => (await api.patch('/users/profile', data)).data,
+    {
+      async onSettled(data) {
+        if (!data) return
+        await router.push(`/schedule/${session!.user.username}`)
+      },
+    },
+  )
 
   const onFormSubmit = handleSubmit(async (data) => {
-    console.log(data)
+    await updateUserProfile(data)
   })
 
-  const isLoading = isSubmitting
+  const isLoading = isSubmitting || isUpdating
 
   return (
     <Container>
