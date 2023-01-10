@@ -118,7 +118,7 @@ export default function TimeIntervalsPage() {
   return (
     <Container>
       <Header>
-        <Heading as="strong">Quase lá</Heading>
+        <Heading as="strong">Defina sua disponibilidade</Heading>
         <Text>
           Defina o intervalo de horários que você está disponível em cada dia da
           semana.
