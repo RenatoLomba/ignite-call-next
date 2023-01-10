@@ -43,6 +43,13 @@ const formSchema = z.object({
     .refine((intervals) => intervals.length > 0, {
       message: 'Inclua pelo menos 1 dia da semana.',
     })
+    .transform((intervals) =>
+      intervals.map((interval) => ({
+        weekDay: interval.weekDay,
+        startTime: interval.startTime,
+        endTime: interval.endTime,
+      })),
+    )
     .refine(
       (intervals) => {
         return intervals.every(
@@ -90,8 +97,8 @@ export default function TimeIntervalsPage() {
 
   const { mutateAsync: createTimeIntervals, isLoading: isCreating } =
     useMutation(
-      async (intervals: FormFieldsOutput['intervals']) =>
-        (await api.post('/users/time-intervals', intervals)).data,
+      async (data: FormFieldsOutput) =>
+        (await api.post('/users/time-intervals', data)).data,
       {
         onSettled(data) {
           if (!data) return
@@ -101,8 +108,7 @@ export default function TimeIntervalsPage() {
     )
 
   const onFormSubmit = handleSubmit(async (data) => {
-    const { intervals } = data as unknown as FormFieldsOutput
-    await createTimeIntervals(intervals)
+    await createTimeIntervals(data as unknown as FormFieldsOutput)
   })
 
   const intervals = watch('intervals')
