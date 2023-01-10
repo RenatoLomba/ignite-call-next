@@ -7,6 +7,7 @@ import type {
 import { Avatar, Heading, Text } from '@ignite-ui/react'
 
 import { prisma } from '../../../lib/prisma'
+import { ScheduleForm } from './components/form'
 import { Container, Header } from './styles'
 
 // #region GET_STATIC_PROPS
@@ -71,6 +72,8 @@ export default function SchedulePage({
         <Heading>{user.name}</Heading>
         <Text>{user.bio}</Text>
       </Header>
+
+      <ScheduleForm />
     </Container>
   )
 }
