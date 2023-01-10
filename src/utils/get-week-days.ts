@@ -2,13 +2,13 @@ interface GetWeekDaysProps {
   short?: boolean
 }
 
-export function getWeekDays({ short }: GetWeekDaysProps) {
+export function getWeekDays(props?: GetWeekDaysProps) {
   const formatter = new Intl.DateTimeFormat('pt-BR', { weekday: 'long' })
 
   return Array.from(Array(7).keys())
     .map((day) => formatter.format(new Date(Date.UTC(2021, 5, day))))
     .map((day) => {
-      if (short) {
+      if (props?.short) {
         return day.substring(0, 3).toUpperCase()
       }
 

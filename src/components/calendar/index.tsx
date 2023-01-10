@@ -43,7 +43,7 @@ export function Calendar() {
               <Day>1</Day>
             </td>
             <td>
-              <Day>2</Day>
+              <Day disabled>2</Day>
             </td>
             <td>
               <Day>3</Day>
