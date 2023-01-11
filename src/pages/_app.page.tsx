@@ -7,6 +7,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '../lib/query-client'
 import { toastOptions } from '../lib/toast'
 import { globalStyles } from '../styles/global'
+import '../lib/dayjs'
 
 globalStyles()
 

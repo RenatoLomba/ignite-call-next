@@ -15,6 +15,7 @@ export const Header = styled('div', {
 
 export const Title = styled(Text, {
   fontWeight: '$medium',
+  textTransform: 'capitalize',
 
   span: {
     color: '$gray200',
