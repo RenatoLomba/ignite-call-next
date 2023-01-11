@@ -26,15 +26,14 @@ export function TimePicker({ selectedDate }: TimePickerProps) {
 
   const { data, isLoading, isError } = useQuery(
     ['user-available-hours', selectedDate],
-    async () => {
-      return (
+    async () =>
+      (
         await api.get<UserAvailabilityResponseData>(
           `/users/${username}/availability?date=${selectedDateDayJs.format(
             'YYYY-MM-DD[T]HH:mm:ss',
           )}`,
         )
-      ).data
-    },
+      ).data,
     {
       select(data) {
         if (!data) return data
