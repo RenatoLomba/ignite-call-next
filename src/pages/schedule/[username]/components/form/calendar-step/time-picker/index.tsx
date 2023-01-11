@@ -1,15 +1,55 @@
 import dayjs from 'dayjs'
+import { useRouter } from 'next/router'
 
+import { Text } from '@ignite-ui/react'
+import { useQuery } from '@tanstack/react-query'
+
+import { api } from '../../../../../../../lib/axios'
 import { Container, Header, TimeItem, TimeList } from './styles'
+
+interface UserAvailabilityResponseData {
+  availability: number[]
+}
 
 interface TimePickerProps {
   selectedDate: Date
 }
 
 export function TimePicker({ selectedDate }: TimePickerProps) {
+  const router = useRouter()
+  const username = String(router.query.username)
+
   const selectedDateDayJs = dayjs(selectedDate)
   const weekDay = selectedDateDayJs.format('dddd')
   const monthDate = selectedDateDayJs.format('DD [de] MMMM')
+
+  const { data, isLoading, isError } = useQuery(
+    ['user-available-hours', selectedDate],
+    async () => {
+      return (
+        await api.get<UserAvailabilityResponseData>(
+          `/users/${username}/availability?date=${selectedDateDayJs.format(
+            'YYYY-MM-DD[T]HH:mm:ss',
+          )}`,
+        )
+      ).data
+    },
+    {
+      select(data) {
+        if (!data) return data
+
+        return {
+          availability: data.availability.map((time) => ({
+            time,
+            timeFormatted: selectedDateDayJs
+              .set('hour', time)
+              .set('minutes', 0)
+              .format('HH:mm'),
+          })),
+        }
+      },
+    },
+  )
 
   return (
     <Container>
@@ -18,23 +58,17 @@ export function TimePicker({ selectedDate }: TimePickerProps) {
       </Header>
 
       <TimeList>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>09:00h</TimeItem>
-        <TimeItem>10:00h</TimeItem>
-        <TimeItem>11:00h</TimeItem>
-        <TimeItem>12:00h</TimeItem>
-        <TimeItem>13:00h</TimeItem>
-        <TimeItem>14:00h</TimeItem>
-        <TimeItem>15:00h</TimeItem>
-        <TimeItem>16:00h</TimeItem>
-        <TimeItem>17:00h</TimeItem>
-        <TimeItem>18:00h</TimeItem>
-        <TimeItem>19:00h</TimeItem>
-        <TimeItem>20:00h</TimeItem>
-        <TimeItem>21:00h</TimeItem>
-        <TimeItem>22:00h</TimeItem>
-        <TimeItem>23:00h</TimeItem>
-        <TimeItem>24:00h</TimeItem>
+        {isLoading ? (
+          <Text>Carregando...</Text>
+        ) : isError || !data ? (
+          <Text>Erro ao buscar horários disponíveis...</Text>
+        ) : (
+          data.availability.map((at) => (
+            <TimeItem key={`${selectedDate.getTime()}__${at.time}`}>
+              {at.timeFormatted}
+            </TimeItem>
+          ))
+        )}
       </TimeList>
     </Container>
   )
