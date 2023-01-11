@@ -19,22 +19,22 @@ export function TimePicker({ selectedDate }: TimePickerProps) {
 
       <TimeList>
         <TimeItem>08:00h</TimeItem>
-        <TimeItem disabled>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem disabled>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
-        <TimeItem>08:00h</TimeItem>
+        <TimeItem>09:00h</TimeItem>
+        <TimeItem>10:00h</TimeItem>
+        <TimeItem>11:00h</TimeItem>
+        <TimeItem>12:00h</TimeItem>
+        <TimeItem>13:00h</TimeItem>
+        <TimeItem>14:00h</TimeItem>
+        <TimeItem>15:00h</TimeItem>
+        <TimeItem>16:00h</TimeItem>
+        <TimeItem>17:00h</TimeItem>
+        <TimeItem>18:00h</TimeItem>
+        <TimeItem>19:00h</TimeItem>
+        <TimeItem>20:00h</TimeItem>
+        <TimeItem>21:00h</TimeItem>
+        <TimeItem>22:00h</TimeItem>
+        <TimeItem>23:00h</TimeItem>
+        <TimeItem>24:00h</TimeItem>
       </TimeList>
     </Container>
   )

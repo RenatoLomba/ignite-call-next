@@ -52,7 +52,7 @@ const handler = withAuthSession(async (req, res, session) => {
     })
   } catch (err) {
     console.error('CREATE INTERVALS ERROR', err)
-    return res.status(500).send("Could't create intervals")
+    return res.status(500).send({ message: "Could't create intervals" })
   }
 })
 

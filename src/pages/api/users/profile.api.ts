@@ -25,7 +25,7 @@ const handler = withAuthSession(async (req, res, session) => {
     })
   } catch (err) {
     console.error('UPDATE USER PROFILE ERROR', err)
-    return res.status(500).send("Could't update user profile")
+    return res.status(500).json({ message: "Could't update user profile" })
   }
 })
 
