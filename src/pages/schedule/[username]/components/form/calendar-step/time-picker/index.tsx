@@ -9,6 +9,7 @@ import { Container, Header, TimeItem, TimeList } from './styles'
 
 interface UserAvailabilityResponseData {
   availability: number[]
+  possibleTimes: number[]
 }
 
 interface TimePickerProps {
@@ -39,13 +40,14 @@ export function TimePicker({ selectedDate }: TimePickerProps) {
         if (!data) return data
 
         return {
-          availability: data.availability.map((time) => ({
+          possibleTimes: data.possibleTimes.map((time) => ({
             time,
             timeFormatted: selectedDateDayJs
               .set('hour', time)
               .set('minutes', 0)
               .format('HH:mm'),
           })),
+          availability: data.availability,
         }
       },
     },
@@ -63,8 +65,11 @@ export function TimePicker({ selectedDate }: TimePickerProps) {
         ) : isError || !data ? (
           <Text>Erro ao buscar horários disponíveis...</Text>
         ) : (
-          data.availability.map((at) => (
-            <TimeItem key={`${selectedDate.getTime()}__${at.time}`}>
+          data.possibleTimes.map((at) => (
+            <TimeItem
+              disabled={!data.availability.includes(at.time)}
+              key={`${selectedDate.getTime()}__${at.time}`}
+            >
               {at.timeFormatted}
             </TimeItem>
           ))

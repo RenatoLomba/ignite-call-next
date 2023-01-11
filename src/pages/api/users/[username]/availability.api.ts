@@ -89,5 +89,5 @@ export default async function handler(
     return !blockedTimes.some((bt) => bt.date.getHours() === time)
   })
 
-  return res.json({ availability })
+  return res.json({ availability, possibleTimes })
 }
