@@ -14,9 +14,10 @@ interface UserAvailabilityResponseData {
 
 interface TimePickerProps {
   selectedDate: Date
+  onSelectTime: (time: number) => void
 }
 
-export function TimePicker({ selectedDate }: TimePickerProps) {
+export function TimePicker({ selectedDate, onSelectTime }: TimePickerProps) {
   const router = useRouter()
   const username = String(router.query.username)
 
@@ -68,6 +69,7 @@ export function TimePicker({ selectedDate }: TimePickerProps) {
         ) : (
           data.map((availableTime) => (
             <TimeItem
+              onClick={() => onSelectTime(availableTime.time)}
               disabled={availableTime.disabled}
               key={`${selectedDate.getTime()}__${availableTime.time}`}
             >

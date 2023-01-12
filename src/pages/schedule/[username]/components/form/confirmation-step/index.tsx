@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { CalendarBlank, Clock } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -15,7 +16,15 @@ const formSchema = z.object({
 
 type FormFields = z.infer<typeof formSchema>
 
-export function ConfirmationStep() {
+interface ConfirmationStepProps {
+  schedulingDate: Date
+  onCancel: () => void
+}
+
+export function ConfirmationStep({
+  schedulingDate,
+  onCancel,
+}: ConfirmationStepProps) {
   const {
     handleSubmit,
     register,
@@ -30,15 +39,19 @@ export function ConfirmationStep() {
 
   const isLoading = isSubmitting
 
+  const dateTime = dayjs(schedulingDate)
+  const dateFormatted = dateTime.format('DD [de] MMMM [de] YYYY')
+  const timeFormatted = dateTime.format('HH:mm[h]')
+
   return (
     <Container as="form" onSubmit={onFormSubmit}>
       <Header>
         <Text>
-          <CalendarBlank /> 22 de Setembro de 2022
+          <CalendarBlank /> {dateFormatted}
         </Text>
 
         <Text>
-          <Clock /> 18:00h
+          <Clock /> {timeFormatted}
         </Text>
       </Header>
 
@@ -66,7 +79,7 @@ export function ConfirmationStep() {
       </label>
 
       <Actions>
-        <Button variant="tertiary" type="button">
+        <Button onClick={onCancel} variant="tertiary" type="button">
           Cancelar
         </Button>
 

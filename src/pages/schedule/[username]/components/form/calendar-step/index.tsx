@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
@@ -14,7 +15,11 @@ interface UserBlockedDatesResponseData {
   blockedDates: number[]
 }
 
-export function CalendarStep() {
+interface CalendarStepProps {
+  onSelectDateTime: (date: Date) => void
+}
+
+export function CalendarStep({ onSelectDateTime }: CalendarStepProps) {
   const router = useRouter()
   const username = String(router.query.username)
 
@@ -52,14 +57,23 @@ export function CalendarStep() {
 
       <Calendar
         showEmptyCalendar={!data}
-        onChangeMonth={setCurrentDate}
+        onChangeMonth={(date) => setCurrentDate(date)}
         blockedWeekDays={data?.blockedWeekDays}
         blockedDates={data?.blockedDates}
         selectedDate={selectedDate}
         onSelectDate={(date) => setSelectedDate(date)}
       />
 
-      {isDateSelected ? <TimePicker selectedDate={selectedDate} /> : null}
+      {isDateSelected ? (
+        <TimePicker
+          onSelectTime={(time) =>
+            onSelectDateTime(
+              dayjs(selectedDate).set('hour', time).startOf('hour').toDate(),
+            )
+          }
+          selectedDate={selectedDate}
+        />
+      ) : null}
     </Container>
   )
 }
