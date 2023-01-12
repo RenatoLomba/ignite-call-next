@@ -11,6 +11,7 @@ import { TimePicker } from './time-picker'
 
 interface UserBlockedDatesResponseData {
   blockedWeekDays: number[]
+  blockedDates: number[]
 }
 
 export function CalendarStep() {
@@ -50,9 +51,10 @@ export function CalendarStep() {
       {isLoading && <Text>Carregando disponibilidades...</Text>}
 
       <Calendar
-        showEmptyCalendar={!data?.blockedWeekDays}
+        showEmptyCalendar={!data}
         onChangeMonth={setCurrentDate}
         blockedWeekDays={data?.blockedWeekDays}
+        blockedDates={data?.blockedDates}
         selectedDate={selectedDate}
         onSelectDate={(date) => setSelectedDate(date)}
       />

@@ -23,11 +23,13 @@ interface CalendarProps {
   onChangeMonth?: (date: Date) => void
   blockedWeekDays?: number[]
   showEmptyCalendar?: boolean
+  blockedDates?: number[]
 }
 
 export function Calendar({
   onSelectDate,
   blockedWeekDays,
+  blockedDates,
   onChangeMonth,
   showEmptyCalendar = false,
 }: CalendarProps) {
@@ -90,7 +92,8 @@ export function Calendar({
         date,
         disabled:
           date.endOf('day').isBefore(new Date()) ||
-          !!blockedWeekDays?.includes(date.get('day')),
+          !!blockedWeekDays?.includes(date.get('day')) ||
+          !!blockedDates?.includes(date.get('date')),
       })),
       ...nextMonthFillArray.map((date) => ({
         date,
@@ -115,7 +118,7 @@ export function Calendar({
     )
 
     return calendarDaysDividedIntoWeeks
-  }, [currentDate, blockedWeekDays, showEmptyCalendar])
+  }, [currentDate, blockedWeekDays, showEmptyCalendar, blockedDates])
 
   return (
     <Container>
