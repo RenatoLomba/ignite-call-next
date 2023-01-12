@@ -50,6 +50,7 @@ export function CalendarStep() {
       {isLoading && <Text>Carregando disponibilidades...</Text>}
 
       <Calendar
+        showEmptyCalendar={!data?.blockedWeekDays}
         onChangeMonth={setCurrentDate}
         blockedWeekDays={data?.blockedWeekDays}
         selectedDate={selectedDate}

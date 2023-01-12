@@ -22,12 +22,14 @@ interface CalendarProps {
   onSelectDate?: (date: Date) => void
   onChangeMonth?: (date: Date) => void
   blockedWeekDays?: number[]
+  showEmptyCalendar?: boolean
 }
 
 export function Calendar({
   onSelectDate,
   blockedWeekDays,
   onChangeMonth,
+  showEmptyCalendar = false,
 }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(() => dayjs().set('date', 1))
 
@@ -47,6 +49,10 @@ export function Calendar({
   }
 
   const calendarWeeks = useMemo(() => {
+    if (showEmptyCalendar) {
+      return []
+    }
+
     const daysInCurrentMonthList = Array.from({
       length: currentDate.daysInMonth(),
     }).map((_, i) => {
@@ -109,7 +115,7 @@ export function Calendar({
     )
 
     return calendarDaysDividedIntoWeeks
-  }, [currentDate, blockedWeekDays])
+  }, [currentDate, blockedWeekDays, showEmptyCalendar])
 
   return (
     <Container>

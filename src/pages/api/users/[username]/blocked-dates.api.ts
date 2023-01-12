@@ -25,7 +25,7 @@ export default async function handler(
     })
   }
 
-  const { username } = validationResult.data
+  const { username, month, year } = validationResult.data
 
   const user = await prisma.user.findUnique({
     where: { username },
@@ -45,6 +45,16 @@ export default async function handler(
   const blockedWeekDays = [0, 1, 2, 3, 4, 5, 6].filter(
     (day) => !availableWeekDays.some((awd) => awd.week_day === day),
   )
+
+  const blockedDatesRaw = await prisma.$queryRaw`
+    SELECT *
+    FROM schedules S
+
+    WHERE S.user_id = ${user.id}
+    AND DATE_FORMAT(S.date, "%Y-%m") = ${`${year}-${month}`}
+  `
+
+  console.log({ blockedDatesRaw })
 
   return res.json({ blockedWeekDays })
 }
