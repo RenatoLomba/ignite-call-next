@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
 import { prisma } from '../../../../lib/prisma'
@@ -79,8 +79,16 @@ export default async function handler(
     where: {
       user_id: user.id,
       date: {
-        gte: referenceDate.set('hour', startTimeHour).toDate(), // greater than or equal
-        lte: referenceDate.set('hour', endTimeHour).toDate(), // less than or equal
+        gte: referenceDate // greater than or equal
+          .set('hour', startTimeHour)
+          .set('minutes', 0)
+          .set('seconds', 0)
+          .toDate(),
+        lte: referenceDate // less than or equal
+          .set('hour', endTimeHour)
+          .set('minutes', 0)
+          .set('seconds', 0)
+          .toDate(),
       },
     },
   })

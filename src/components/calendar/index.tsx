@@ -20,9 +20,15 @@ type CalendarWeeks = CalendarWeek[]
 interface CalendarProps {
   selectedDate?: Date | null
   onSelectDate?: (date: Date) => void
+  onChangeMonth?: (date: Date) => void
+  blockedWeekDays?: number[]
 }
 
-export function Calendar({ onSelectDate }: CalendarProps) {
+export function Calendar({
+  onSelectDate,
+  blockedWeekDays,
+  onChangeMonth,
+}: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(() => dayjs().set('date', 1))
 
   const currentMonth = currentDate.format('MMMM')
@@ -31,11 +37,13 @@ export function Calendar({ onSelectDate }: CalendarProps) {
   const handlePreviousMonth = () => {
     const previousMonthDate = currentDate.subtract(1, 'month')
     setCurrentDate(previousMonthDate)
+    onChangeMonth?.(previousMonthDate.toDate())
   }
 
   const handleNextMonth = () => {
     const nextMonthDate = currentDate.add(1, 'month')
     setCurrentDate(nextMonthDate)
+    onChangeMonth?.(nextMonthDate.toDate())
   }
 
   const calendarWeeks = useMemo(() => {
@@ -74,7 +82,9 @@ export function Calendar({ onSelectDate }: CalendarProps) {
       })),
       ...daysInCurrentMonthList.map((date) => ({
         date,
-        disabled: date.endOf('day').isBefore(new Date()),
+        disabled:
+          date.endOf('day').isBefore(new Date()) ||
+          !!blockedWeekDays?.includes(date.get('day')),
       })),
       ...nextMonthFillArray.map((date) => ({
         date,
@@ -99,7 +109,7 @@ export function Calendar({ onSelectDate }: CalendarProps) {
     )
 
     return calendarDaysDividedIntoWeeks
-  }, [currentDate])
+  }, [currentDate, blockedWeekDays])
 
   return (
     <Container>

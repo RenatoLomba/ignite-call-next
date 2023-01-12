@@ -1,4 +1,4 @@
-import { Box, styled } from '@ignite-ui/react'
+import { Box, styled, Text } from '@ignite-ui/react'
 
 export const Container = styled(Box, {
   margin: '$6 auto 0',
@@ -17,9 +17,17 @@ export const Container = styled(Box, {
       },
       false: { width: 540, gridTemplateColumns: '1fr' },
     },
+    isLoading: {
+      true: {
+        [`> ${Text}`]: {
+          margin: '$4',
+        },
+      },
+    },
   },
 
   defaultVariants: {
     isTimePickerOpen: false,
+    isLoading: false,
   },
 })

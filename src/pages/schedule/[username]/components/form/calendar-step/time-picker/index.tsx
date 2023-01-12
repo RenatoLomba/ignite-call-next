@@ -25,7 +25,7 @@ export function TimePicker({ selectedDate }: TimePickerProps) {
   const monthDate = selectedDateDayJs.format('DD [de] MMMM')
 
   const { data, isLoading, isError } = useQuery(
-    ['user-available-hours', selectedDate],
+    ['user-available-hours', selectedDate, username],
     async () =>
       (
         await api.get<UserAvailabilityResponseData>(
@@ -38,16 +38,18 @@ export function TimePicker({ selectedDate }: TimePickerProps) {
       select(data) {
         if (!data) return data
 
-        return {
-          possibleTimes: data.possibleTimes.map((time) => ({
+        return data.possibleTimes.map((time) => {
+          const disabled = !data.availability.includes(time)
+
+          return {
+            disabled,
             time,
             timeFormatted: selectedDateDayJs
               .set('hour', time)
               .set('minutes', 0)
               .format('HH:mm'),
-          })),
-          availability: data.availability,
-        }
+          }
+        })
       },
     },
   )
@@ -64,12 +66,12 @@ export function TimePicker({ selectedDate }: TimePickerProps) {
         ) : isError || !data ? (
           <Text>Erro ao buscar horários disponíveis...</Text>
         ) : (
-          data.possibleTimes.map((at) => (
+          data.map((availableTime) => (
             <TimeItem
-              disabled={!data.availability.includes(at.time)}
-              key={`${selectedDate.getTime()}__${at.time}`}
+              disabled={availableTime.disabled}
+              key={`${selectedDate.getTime()}__${availableTime.time}`}
             >
-              {at.timeFormatted}
+              {availableTime.timeFormatted}
             </TimeItem>
           ))
         )}
