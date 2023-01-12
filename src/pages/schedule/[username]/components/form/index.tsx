@@ -9,7 +9,7 @@ export function ScheduleForm() {
   if (selectedDateTime) {
     return (
       <ConfirmationStep
-        onCancel={() => setSelectedDateTime(null)}
+        backToCalendar={() => setSelectedDateTime(null)}
         schedulingDate={selectedDateTime}
       />
     )

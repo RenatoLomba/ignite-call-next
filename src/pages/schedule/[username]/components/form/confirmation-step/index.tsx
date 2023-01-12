@@ -1,11 +1,14 @@
 import dayjs from 'dayjs'
+import { useRouter } from 'next/router'
 import { CalendarBlank, Clock } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Text, TextArea, TextInput } from '@ignite-ui/react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
+import { api } from '../../../../../../lib/axios'
 import { Actions, Container, FormErrorText, Header } from './styles'
 
 const formSchema = z.object({
@@ -18,26 +21,52 @@ type FormFields = z.infer<typeof formSchema>
 
 interface ConfirmationStepProps {
   schedulingDate: Date
-  onCancel: () => void
+  backToCalendar: () => void
 }
 
 export function ConfirmationStep({
   schedulingDate,
-  onCancel,
+  backToCalendar,
 }: ConfirmationStepProps) {
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<FormFields>({
     resolver: zodResolver(formSchema),
   })
 
+  const username = String(router.query.username)
+
+  const { mutateAsync, isLoading: isCreating } = useMutation(
+    async (data: FormFields) =>
+      (
+        await api.post<{ success: boolean }>(`/users/${username}/schedule`, {
+          date: schedulingDate.toISOString(),
+          name: data.name,
+          email: data.email,
+          observations: data.observations,
+        })
+      ).data,
+    {
+      async onSettled(data) {
+        if (!data?.success) return
+
+        reset()
+        queryClient.invalidateQueries()
+        backToCalendar()
+      },
+    },
+  )
+
   const onFormSubmit = handleSubmit(async (data) => {
-    console.log(data)
+    await mutateAsync(data)
   })
 
-  const isLoading = isSubmitting
+  const isLoading = isSubmitting || isCreating
 
   const dateTime = dayjs(schedulingDate)
   const dateFormatted = dateTime.format('DD [de] MMMM [de] YYYY')
@@ -79,7 +108,7 @@ export function ConfirmationStep({
       </label>
 
       <Actions>
-        <Button onClick={onCancel} variant="tertiary" type="button">
+        <Button onClick={backToCalendar} variant="tertiary" type="button">
           Cancelar
         </Button>
 
