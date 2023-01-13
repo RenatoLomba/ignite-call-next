@@ -1,5 +1,6 @@
 import type { GetServerSideProps } from 'next'
 import { getSession, signIn, useSession } from 'next-auth/react'
+import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
 import { parseCookies } from 'nookies'
 import { ArrowRight, Check } from 'phosphor-react'
@@ -48,52 +49,56 @@ export default function CalendarConnectionPage() {
   const handleCalendarConnection = () => signIn('google')
 
   return (
-    <Container>
-      <Header>
-        <Heading as="strong">Conecte sua agenda!</Heading>
-        <Text>
-          Conecte o seu calendário para verificar automaticamente as horas
-          ocupadas e os novos eventos à medida em que são agendados.
-        </Text>
+    <>
+      <NextSeo title="Conecte seu calendário | Ignite Call" noindex />
 
-        <MultiStep currentStep={2} size={4} />
-      </Header>
+      <Container>
+        <Header>
+          <Heading as="strong">Conecte sua agenda!</Heading>
+          <Text>
+            Conecte o seu calendário para verificar automaticamente as horas
+            ocupadas e os novos eventos à medida em que são agendados.
+          </Text>
 
-      <ConnectBox>
-        <ConnectItem>
-          <Text>Google Calendar</Text>
+          <MultiStep currentStep={2} size={4} />
+        </Header>
 
-          {isAuthenticated ? (
-            <Button size="sm" disabled>
-              Conectado
-              <Check />
-            </Button>
-          ) : (
-            <Button
-              onClick={handleCalendarConnection}
-              size="sm"
-              variant="secondary"
-            >
-              Conectar
-              <ArrowRight />
-            </Button>
-          )}
-        </ConnectItem>
+        <ConnectBox>
+          <ConnectItem>
+            <Text>Google Calendar</Text>
 
-        {hasAuthCalendarError ? (
-          <AuthErrorText size="sm">
-            Falha ao se conectar ao Google, verifique se você habilitou as
-            permissões de acesso ao Google Calendar.
-          </AuthErrorText>
-        ) : null}
+            {isAuthenticated ? (
+              <Button size="sm" disabled>
+                Conectado
+                <Check />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleCalendarConnection}
+                size="sm"
+                variant="secondary"
+              >
+                Conectar
+                <ArrowRight />
+              </Button>
+            )}
+          </ConnectItem>
 
-        <Button
-          onClick={async () => await router.push('/register/time-intervals')}
-          disabled={!isAuthenticated}
-        >
-          Próximo passo <ArrowRight />
-        </Button>
-      </ConnectBox>
-    </Container>
+          {hasAuthCalendarError ? (
+            <AuthErrorText size="sm">
+              Falha ao se conectar ao Google, verifique se você habilitou as
+              permissões de acesso ao Google Calendar.
+            </AuthErrorText>
+          ) : null}
+
+          <Button
+            onClick={async () => await router.push('/register/time-intervals')}
+            disabled={!isAuthenticated}
+          >
+            Próximo passo <ArrowRight />
+          </Button>
+        </ConnectBox>
+      </Container>
+    </>
   )
 }

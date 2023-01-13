@@ -1,3 +1,4 @@
+import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { useEffect } from 'react'
@@ -62,48 +63,52 @@ export default function RegisterPage() {
   })
 
   return (
-    <Container>
-      <Header>
-        <Heading as="strong">Bem-vindo ao Ignite Call!</Heading>
-        <Text>
-          Precisamos de algumas informações para criar seu perfil! Ah, você pode
-          editar essas informações depois.
-        </Text>
+    <>
+      <NextSeo title="Crie uma conta | Ignite Call" />
 
-        <MultiStep currentStep={1} size={4} />
-      </Header>
+      <Container>
+        <Header>
+          <Heading as="strong">Bem-vindo ao Ignite Call!</Heading>
+          <Text>
+            Precisamos de algumas informações para criar seu perfil! Ah, você
+            pode editar essas informações depois.
+          </Text>
 
-      <Form as="form" onSubmit={onFormSubmit}>
-        <label>
-          <Text size="sm">Nome de usuário</Text>
-          <TextInput
-            {...register('username')}
-            prefix="ignite.com/"
-            placeholder="seu-usuario"
-          />
+          <MultiStep currentStep={1} size={4} />
+        </Header>
 
-          {errors.username ? (
-            <FormErrorText as="small" size="sm">
-              {errors.username.message}
-            </FormErrorText>
-          ) : null}
-        </label>
+        <Form as="form" onSubmit={onFormSubmit}>
+          <label>
+            <Text size="sm">Nome de usuário</Text>
+            <TextInput
+              {...register('username')}
+              prefix="ignite.com/"
+              placeholder="seu-usuario"
+            />
 
-        <label>
-          <Text size="sm">Nome completo</Text>
-          <TextInput {...register('name')} placeholder="Seu nome" />
+            {errors.username ? (
+              <FormErrorText as="small" size="sm">
+                {errors.username.message}
+              </FormErrorText>
+            ) : null}
+          </label>
 
-          {errors.name ? (
-            <FormErrorText as="small" size="sm">
-              {errors.name.message}
-            </FormErrorText>
-          ) : null}
-        </label>
+          <label>
+            <Text size="sm">Nome completo</Text>
+            <TextInput {...register('name')} placeholder="Seu nome" />
 
-        <Button disabled={isLoading} type="submit">
-          Próximo passo <ArrowRight size={20} />
-        </Button>
-      </Form>
-    </Container>
+            {errors.name ? (
+              <FormErrorText as="small" size="sm">
+                {errors.name.message}
+              </FormErrorText>
+            ) : null}
+          </label>
+
+          <Button disabled={isLoading} type="submit">
+            Próximo passo <ArrowRight size={20} />
+          </Button>
+        </Form>
+      </Container>
+    </>
   )
 }

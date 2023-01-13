@@ -1,4 +1,5 @@
 import { SessionProvider } from 'next-auth/react'
+import { DefaultSeo } from 'next-seo'
 import type { AppProps } from 'next/app'
 import { Toaster } from 'react-hot-toast'
 
@@ -18,6 +19,15 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
+        <DefaultSeo
+          openGraph={{
+            type: 'website',
+            locale: 'pt_BR',
+            url: 'https://ignite-call.renato.com.br',
+            siteName: 'Ignite Call',
+          }}
+        />
+
         <Component {...pageProps} />
         <Toaster toastOptions={toastOptions} />
       </QueryClientProvider>

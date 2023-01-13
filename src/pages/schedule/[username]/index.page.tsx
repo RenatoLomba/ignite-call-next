@@ -3,6 +3,7 @@ import type {
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from 'next'
+import { NextSeo } from 'next-seo'
 
 import { Avatar, Heading, Text } from '@ignite-ui/react'
 
@@ -66,14 +67,18 @@ export default function SchedulePage({
   user,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
-    <Container>
-      <Header>
-        <Avatar src={user.avatarUrl!} />
-        <Heading>{user.name}</Heading>
-        <Text>{user.bio}</Text>
-      </Header>
+    <>
+      <NextSeo title={`Agendar com ${user.name} | Ignite Call`} />
 
-      <ScheduleForm />
-    </Container>
+      <Container>
+        <Header>
+          <Avatar src={user.avatarUrl!} />
+          <Heading>{user.name}</Heading>
+          <Text>{user.bio}</Text>
+        </Header>
+
+        <ScheduleForm />
+      </Container>
+    </>
   )
 }
